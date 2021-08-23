@@ -1,0 +1,18 @@
+Run the bash scripts on an HPC network to get a performance table of an FFT method.
+
+Example:
+
+$ ./test_fftw_mpi.sh MPI-2D_with1D.c 4096 4096
+
+| Nb procs | Time (s) | Speedup  | Efficiency |
+|----------|----------|----------|------------|
+|       01 | 1.73e+01 | 1.00     | 1.00       |
+|       02 | 1.06e+01 | 1.63     | 0.81       |
+|       04 | 5.49e+00 | 3.15     | 0.79       |
+|       08 | 3.07e+00 | 5.62     | 0.70       |
+|       16 | 2.05e+00 | 8.42     | 0.53       |
+
+
+
+*.c scripts test FFTW methods and are tested with either test_fftw_mpi.sh or test_fftw_threads.sh .
+*.py scripts test FluidFFT methods and are tested with test_fluid_mpi.sh .
