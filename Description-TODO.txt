@@ -1,0 +1,29 @@
+-------DESCRIPTION-------
+
+FFTW is a C library used for performing discrete Fourier transforms in one or multiple dimensions. It allows for parallel
+transforms (multithreading and MPI).
+
+FluidFFT is a library that provides Python wrapper classes for libraries such as FFTW, allowing the use of parallel transforms
+in Python.
+
+FFTW provides its own one-step implementation of N-dimensional transforms (‘fftw_mpi_plan_dft_2d’, ‘fftw_plan_dft_3d’, etc.),
+but an implementation using only 1D methods can be written.
+
+In 2D, this is done by first performing 1D transforms on the X-axis (on the rows of the matrix). Since 1D transforms are
+independent between rows, they can be split between parallel processes without loss of performance.
+A second set of 1D transforms is performed on the Y-axis by first transposing the matrix and reiterating the previous step.
+To get the 2D DFT of the original matrix, it is transposed a second time, though this may not always be necessary.
+In the case of an MPI distribution, FFTW also splits the transpose operation between processes. Some workaround is required
+for the multithreaded version.
+
+FluidFFT does not provide methods to perform 1D transforms. However, it does provide methods for performing 2D and 3D transforms
+using either FFTW’s 2D and 3D methods or the 1D method.
+
+
+
+-------To Do list-------
+
+FluidFFT’s 3D method is the only one the implement multithreading (see src_cpp/3d/ fft3d_with_fftw3d.cpp, ‘#ifdef OMP’).
+However, the execution time is the same no matter the value of the OMP_NUM_THREADS macro.
+
+Implement FFTW’s 3D DFT with 1D transforms.
