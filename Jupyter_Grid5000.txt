@@ -1,0 +1,31 @@
+-------CONNECT JUPYTER TO GRID5000-------
+
+Use of Jupter is optional when using FluidFFT MPI methods.
+
+portA, portB, portC, and portD are ports of your choosing, such as 8888, 4000, etc.
+
+On your workstation:
+
+$ ssh -f login@access.grid5000.fr -L portA:localhost:portB -N
+$ ssh login@access.grid5000.fr
+login@access:~$ ssh -f site -L portB:localhost:portC -N
+login@access:~$ ssh site
+
+
+Reserve a node with oarsub:
+
+login@site:~$ oarsub -t allow_classic_ssh -I
+login@node:~$ jupyter notebook --no-browser --port=portD
+
+
+In another terminal:
+
+login@site:~$ ssh -f node -L portC:localhost:portD -N
+
+In a browser on your workstation, go to localhost:portA.
+A Jupyter Notebook page asking for a token should appear.
+Enter the token given on the node by jupyter.
+A Notebook page of your Grid5000 directory should now be available.
+
+You may have to reset some SSH connections later on, particularly between your
+workstation and the global access machine.
