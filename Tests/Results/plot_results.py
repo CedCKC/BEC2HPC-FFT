@@ -1,33 +1,14 @@
-# -*- coding: utf-8 -*-
+# Plot execution time and speedup of methods and save to results-*D.png
 
 import matplotlib.pyplot as plt
 
-def plot_time(X,T,L,title):
-    fig = plt.figure(dpi=150)
-    plt.loglog(base=2)
-    plt.grid()
-    plt.xlabel('number of processes')
-    plt.ylabel('execution time (seconds)')
-    plt.title(title)
-    for i in range(len(L)):
-        plt.plot(X, T[i], '-x', linestyle='--', label=L[i])
-    plt.legend()
-    return fig
-
-def plot_speedup(X,S,L,title):
-    fig = plt.figure(dpi=150)
-    plt.loglog(base=2)
-    plt.grid()
-    plt.xlabel('number of processes')
-    plt.ylabel('speedup')
-    plt.title(title)
-    plt.plot([X[1],X[-1]], [X[1],X[-1]], color='k')
-    for i in range(len(L)):
-        plt.plot(X[1:], S[i][1:], '-x', linestyle='--', label=L[i])
-    plt.legend(bbox_to_anchor=(1,1), loc="upper left")
-    return fig
-
 def plot_everything(X,T,S,L,title):
+    #Return fig of execution time and speedup plot
+    #X: x-axis values, nb of processes
+    #T: list of list of execution times for each nb of procs, for each method
+    #S: list of list of speedup for each nb of procs, for each method
+    #L: list of methods
+    #title: string, title of plot
     fig, ax = plt.subplots(1, 2, dpi=150, figsize=(9,4))
     fig.suptitle(title)
     
@@ -54,12 +35,13 @@ def plot_everything(X,T,S,L,title):
     return fig
     
 def speedup(T):
+    #Return speedup for list of list of execution times T 
     return [T[0]/t for t in T]
 
-def efficiency(S):
-    return [S[i]/2**i for i in range(len(S))]
 
+#Nb of processes tested for all methods
 procs = [1, 2, 4, 8, 16]
+
 
 #1D (33554432)
 L_1D = ['FFTW MPI',
@@ -101,8 +83,6 @@ T_3D = [[1.59e+01, 8.86e+00, 4.28e+00, 2.36e+00, 1.39e+00],
         [1.94e+00, 1.26e+00, 6.43e-01, 3.86e-01, 2.89e-01]]
 
 S_3D = [speedup(T) for T in T_3D]
-
-
 
 
 fig_1D = plot_everything(procs, T_1D, S_1D, L_1D, '1D, N = 33 554 432')
