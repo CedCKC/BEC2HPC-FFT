@@ -1,0 +1,107 @@
+-------INSTALL FFTW-------
+
+Copy the bash script from https://fluidfft.readthedocs.io/en/latest/install/fft_libs.html and paste it in a file (e.g. install-fftw.sh).
+You may change the package version (pkgver) and the installation directory (pkgdir) if needed.
+
+$ chmod +x install-fftw.sh
+$ ./install-fftw.sh
+
+Four new directories should be visible: fftw-3.3.7, fftw-3.3.7-double, fftw-3.3.7-long-double, and fftw-3.3.7-single.
+
+$ cd fftw-3.3.7
+
+You may configure FFTW with the flags you wish (see http://www.fftw.org/fftw2_doc/fftw_6.html).
+For instance, to configure FFTW with the FFTW MPI library, the FFTW threads library, and the OpenMP library in a directory (e.g. opt):
+
+fftw-3.3.7:~$ ./configure --enable-mpi --enable-threads --enable-openmp --prefix=$HOME/opt/
+fftw-3.3.7:~$ make
+fftw-3.3.7:~$ make install
+
+To then compile a program, you must link it to the appropriate routines and libraries, for example:
+
+$ gcc -O3 example.c -o example.ex -I$HOME/opt/include -L$HOME/opt/lib -lfftw3 -lm
+$ mpicc -O3 example-MPI.c -o example-MPI.ex -I$HOME/opt/include -L$HOME/opt/lib -lfftw3-mpi -lfftw3 -lm
+$ gcc -O3 example-threads.c -o example-threads.ex -I$HOME/opt/include -L$HOME/opt/lib -fopenmp -lfftw3_omp -lfftw3 -lm
+
+
+
+
+
+
+
+-------INSTALL FLUIDFFT WITH FFTW AND FFTW MPI--------
+
+Once FFTW has been installed with $ ./ install-fftw.sh:
+
+$ wget https://foss.heptapod.net/fluiddyn/fluidfft/raw/branch/default/site.cfg.default -O ~/.fluidfft-site.cfg
+
+Edit ~/.fluidfft-site.cfg like so:
+
+[fftw3]
+use = True
+dir = $HOME/.local 
+include_dir = $HOME/.local/include
+library_dir = $HOME/.local/lib
+
+[fftw3_mpi]
+use = True
+dir = $HOME/.local
+include_dir = $HOME/.local/include
+library_dir = $HOME/.local/lib
+
+Save and exit.
+
+$ pip3 install fluidfft --no-binary fluidfft -v
+
+To test the installation, copy https://fluidfft.readthedocs.io/en/latest/ipynb/executed/tuto_fft2d_mpi.html
+into a single file (e.g. fluidfft-test.py, without the first cell containing ipyparallel, and without the %%px).
+
+$ mpirun -n 1 python3 fluidfft-test.py
+
+--------
+N0 = 48 ; N1 = 32
+Initialization (FFT2DMPIWithFFTW1D) done in 0.087459 s
+tests (FFT2DMPIWithFFTW1D)...
+ OK!
+1
+bench from cpp...
+time fft (FFT2DMPIWithFFTW1D):  0.000014 s
+time ifft (FFT2DMPIWithFFTW1D): 0.000017 s
+t_fft = 1.38e-05 s; t_ifft = 1.67e-05 s
+True
+k0: [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15]
+k1: [ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 -23 -22 -21 -20 -19 -18 -17 -16 -15 -14 -13 -12 -11 -10 -9 -8 -7 -6 -5 -4 -3 -2 -1]
+(48, 32)
+(16, 48)
+(0, 0)
+
+
+
+If more than one process is available:
+
+$ mpirun -n 2 python3 fluidfft-test.py
+
+--------
+nb_proc: 2
+N0 = 48 ; N1 = 32
+Initialization (FFT2DMPIWithFFTW1D) done in 0.088276 s
+tests (FFT2DMPIWithFFTW1D)...
+ OK!
+1
+1
+bench from cpp...
+time fft (FFT2DMPIWithFFTW1D):  0.000031 s
+time ifft (FFT2DMPIWithFFTW1D): 0.000010 s
+True
+t_fft = 3.07e-05 s; t_ifft = 1.03e-05 s
+True
+k0: [8 9 10 11 12 13 14 15]
+k0: [0 1 2 3 4 5 6 7]
+k1: [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 -23 -22 -21 -20 -19 -18 -17 -16 -15 -14 -13 -12 -11 -10 -9 -8 -7 -6 -5 -4 -3 -2 -1]
+(24, 32)
+(8, 48)
+(24, 0)
+k1: [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 -23 -22 -21 -20 -19 -18 -17 -16 -15 -14 -13 -12 -11 -10 -9 -8 -7 -6 -5 -4 -3 -2 -1]
+(24, 32)
+(8, 48)
+(0, 0)
