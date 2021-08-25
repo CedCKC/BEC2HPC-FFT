@@ -2,31 +2,6 @@
 
 import matplotlib.pyplot as plt
 
-def plot_time(X,T,L,title):
-    fig = plt.figure(dpi=150)
-    plt.loglog(base=2)
-    plt.grid()
-    plt.xlabel('number of processes')
-    plt.ylabel('execution time (seconds)')
-    plt.title(title)
-    for i in range(len(L)):
-        plt.plot(X, T[i], '-x', linestyle='--', label=L[i])
-    plt.legend()
-    return fig
-
-def plot_speedup(X,S,L,title):
-    fig = plt.figure(dpi=150)
-    plt.loglog(base=2)
-    plt.grid()
-    plt.xlabel('number of processes')
-    plt.ylabel('speedup')
-    plt.title(title)
-    plt.plot([X[1],X[-1]], [X[1],X[-1]], color='k')
-    for i in range(len(L)):
-        plt.plot(X[1:], S[i][1:], '-x', linestyle='--', label=L[i])
-    plt.legend(bbox_to_anchor=(1,1), loc="upper left")
-    return fig
-
 def plot_everything(X,T,S,L,title):
     fig, ax = plt.subplots(1, 2, dpi=150, figsize=(9,4))
     fig.suptitle(title)
