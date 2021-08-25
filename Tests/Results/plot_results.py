@@ -1,14 +1,33 @@
-# Plot execution time and speedup of methods and save to results-*D.png
+# -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
 
+def plot_time(X,T,L,title):
+    fig = plt.figure(dpi=150)
+    plt.loglog(base=2)
+    plt.grid()
+    plt.xlabel('number of processes')
+    plt.ylabel('execution time (seconds)')
+    plt.title(title)
+    for i in range(len(L)):
+        plt.plot(X, T[i], '-x', linestyle='--', label=L[i])
+    plt.legend()
+    return fig
+
+def plot_speedup(X,S,L,title):
+    fig = plt.figure(dpi=150)
+    plt.loglog(base=2)
+    plt.grid()
+    plt.xlabel('number of processes')
+    plt.ylabel('speedup')
+    plt.title(title)
+    plt.plot([X[1],X[-1]], [X[1],X[-1]], color='k')
+    for i in range(len(L)):
+        plt.plot(X[1:], S[i][1:], '-x', linestyle='--', label=L[i])
+    plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+    return fig
+
 def plot_everything(X,T,S,L,title):
-    #Return fig of execution time and speedup plot
-    #X: x-axis values, nb of processes
-    #T: list of list of execution times for each nb of procs, for each method
-    #S: list of list of speedup for each nb of procs, for each method
-    #L: list of methods
-    #title: string, title of plot
     fig, ax = plt.subplots(1, 2, dpi=150, figsize=(9,4))
     fig.suptitle(title)
     
@@ -35,13 +54,12 @@ def plot_everything(X,T,S,L,title):
     return fig
     
 def speedup(T):
-    #Return speedup for list of list of execution times T 
     return [T[0]/t for t in T]
 
+def efficiency(S,X):
+    return [S[i]/X[i] for i in range(len(S))]
 
-#Nb of processes tested for all methods
 procs = [1, 2, 4, 8, 16]
-
 
 #1D (33554432)
 L_1D = ['FFTW MPI',
@@ -72,17 +90,23 @@ S_2D = [speedup(T) for T in T_2D]
 
 
 #3D (512, 512, 512)
-L_3D = ['FFTW MPI (with FFTW3D)',
+L_3D = ['FFTW MPI (with FFTW1D)',
+        'FFTW MPI (with FFTW3D)',
+        'FFTW threads (with FFTW1D)',
         'FFTW threads (with FFTW3D)',
         'FluidFFT MPI (with FFTW1D)',
         'FluidFFT MPI (with FFTW3D)']
 
-T_3D = [[1.59e+01, 8.86e+00, 4.28e+00, 2.36e+00, 1.39e+00],
+T_3D = [[1.11e+01, 7.04e+00, 3.59e+00, 2.07e+00, 1.48e+00],
+        [1.38e+01, 7.99e+00, 4.04e+00, 2.24e+00, 1.37e+00],
+        [7.69e+00, 4.92e+00, 3.32e+00, 2.76e+00, 1.97e+00],
         [1.39e+01, 7.34e+00, 4.52e+00, 3.01e+00, 2.24e+00],
         [3.99e+00, 2.13e+00, 1.50e+00, 6.90e-01, 4.38e-01],
         [1.94e+00, 1.26e+00, 6.43e-01, 3.86e-01, 2.89e-01]]
 
 S_3D = [speedup(T) for T in T_3D]
+
+
 
 
 fig_1D = plot_everything(procs, T_1D, S_1D, L_1D, '1D, N = 33 554 432')
