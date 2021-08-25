@@ -23,7 +23,7 @@ using either FFTW’s 2D and 3D methods or the 1D method.
 
 -------To Do list-------
 
-FluidFFT’s 3D method is the only one the implement multithreading (see src_cpp/3d/ fft3d_with_fftw3d.cpp, ‘#ifdef OMP’).
+FluidFFT’s 3D method is the only one to implement multithreading (see src_cpp/3d/fft3d_with_fftw3d.cpp, ‘#ifdef OMP’).
 However, the execution time is the same no matter the value of the OMP_NUM_THREADS macro.
 
-Implement FFTW’s 3D DFT with 1D transforms.
+Test cuFFT methods.
